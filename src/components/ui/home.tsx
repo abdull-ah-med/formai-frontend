@@ -1,4 +1,4 @@
-import { ArrowRight, CheckCircle, Sparkles } from "lucide-react";
+import { ArrowRight, Sparkles, Zap, Shield, Globe } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useEffect } from "react";
@@ -7,223 +7,171 @@ import { logoutAndRedirect } from "@/auth/authHelper";
 import { useDocumentTitle } from "@/utils/useDocumentTitle";
 
 const Home = () => {
-        const navigate = useNavigate();
-        const { isAuthenticated, loading } = useAuth();
-        useDocumentTitle("AI-Powered Form Creation");
+	const navigate = useNavigate();
+	const { isAuthenticated, loading } = useAuth();
+	useDocumentTitle("Formai - AI Form Generation");
 
-        useEffect(() => {
-                if (loading) {
-                        return; // Wait until authentication status is resolved
-                }
+	useEffect(() => {
+		if (loading) return;
+		if (isAuthenticated) {
+			const nonPersistent = localStorage.getItem("nonPersistentAuth") === "true";
+			if (nonPersistent) {
+				(async () => {
+					await logoutAndRedirect(null);
+				})();
+			} else {
+				navigate("/dashboard", { replace: true });
+			}
+		}
+	}, [isAuthenticated, loading, navigate]);
 
-                if (isAuthenticated) {
-                        const nonPersistent = localStorage.getItem("nonPersistentAuth") === "true";
+	return (
+		<div className="bg-background text-foreground min-h-screen overflow-x-hidden selection:bg-white/20">
+			{/* Hero Section */}
+			<section className="relative min-h-screen flex flex-col justify-center items-center px-4 sm:px-6 lg:px-8 text-center pt-24 pb-12">
+				{/* Background Image - Responsive */}
+				<div className="absolute inset-0 overflow-hidden">
+					<div className="absolute inset-0 bg-black/40 z-10"></div> {/* Overlay for text readability */}
+					{/* Mobile background */}
+					<img 
+						src="/gradient-phone.png"
+						alt="Background" 
+						className="w-full h-full object-cover opacity-80 md:hidden"
+					/>
+					{/* Desktop background */}
+					<img 
+						src="/gradient-desktop.jpeg"
+						alt="Background" 
+						className="w-full h-full object-cover opacity-80 hidden md:block"
+					/>
+					<div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-background z-20"></div>
+				</div>
 
-                        if (nonPersistent) {
-                                // End session for non-persistent users
-                                (async () => {
-                                        await logoutAndRedirect(null);
-                                })();
-                        } else {
-                                // Persistent user – send them back to dashboard
-                                navigate("/dashboard", { replace: true });
-                        }
-                }
-        }, [isAuthenticated, loading, navigate]);
+				<div className="relative z-30 max-w-5xl mx-auto space-y-8 mt-10">
+					<h1 className="text-5xl sm:text-7xl md:text-8xl lg:text-[7rem] font-heading font-normal tracking-tight leading-[1.1] text-white animate-in fade-in slide-in-from-bottom-8 duration-700 delay-100 drop-shadow-2xl">
+						AI that feels <span className="italic">human.</span><br />
+						Builds forms in seconds.
+					</h1>
+					
+					<p className="text-xl md:text-2xl text-white/80 max-w-2xl mx-auto leading-relaxed animate-in fade-in slide-in-from-bottom-8 duration-700 delay-200 font-light">
+						Handle millions of responses with a platform built for complexity, designed for simplicity.
+					</p>
+					
+					<div className="flex flex-col sm:flex-row items-center justify-center gap-6 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-300 pt-8">
+						<Button
+							size="lg"
+							className="rounded-full px-10 py-7 text-lg bg-white text-black hover:bg-white/90 shadow-xl transition-transform hover:scale-105 active:scale-95 min-w-[200px]"
+							onClick={() => navigate("/signup")}>
+							Get Started
+						</Button>
+					</div>
+				</div>
+				
+				{/* Floating Concept UI at bottom of hero */}
+				<div className="relative z-30 mt-20 w-full max-w-4xl mx-auto animate-in fade-in slide-in-from-bottom-12 duration-1000 delay-500">
+					<div className="glass-panel p-1 rounded-2xl border-white/10 bg-black/40 backdrop-blur-xl">
+						<div className="bg-black/50 rounded-xl p-6 border border-white/5 flex items-center gap-4">
+							<div className="w-3 h-3 rounded-full bg-red-500"></div>
+							<div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+							<div className="w-3 h-3 rounded-full bg-green-500"></div>
+							<div className="ml-4 h-2 w-32 bg-white/10 rounded-full"></div>
+						</div>
+						<div className="h-40 md:h-64 flex items-center justify-center">
+							<span className="text-white/20 font-heading italic text-2xl">Interactive Demo Interface</span>
+						</div>
+					</div>
+				</div>
+			</section>
 
-        const features = [
-                {
-                        icon: <Sparkles className="w-6 h-6 text-white" />,
-                        title: "Revolutionary AI Form Creation",
-                        description: "Create sophisticated Google Forms in seconds with a simple text prompt",
-                },
-                {
-                        icon: <CheckCircle className="w-6 h-6 text-white" />,
-                        title: "Seamless Google Integration",
-                        description: "Forms appear instantly in your Google account with zero manual setup",
-                },
-                {
-                        icon: <CheckCircle className="w-6 h-6 text-white" />,
-                        title: "Advanced Question Intelligence",
-                        description: "Our AI crafts perfect questions, conditional logic, and response validation",
-                },
-        ];
 
-        return (
-                <div className="bg-black text-white min-h-screen text-[15px]">
-                        {/* Hero Section */}
-                        <section className="relative min-h-screen flex items-center px-4 sm:px-6 lg:px-8">
-                                {/* Background Elements */}
-                                <div className="absolute inset-0 overflow-hidden">
-                                        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-white/5 rounded-full blur-3xl animate-pulse"></div>
-                                        <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-white/5 rounded-full blur-3xl animate-pulse delay-1000"></div>
-                                </div>
 
-                                <div className="relative z-10 max-w-7xl mx-auto w-full">
-                                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                                                {/* Left Side - Tagline */}
-                                                <div className="text-left">
-                                                        <h1 className="text-6xl md:text-8xl font-bold text-white mb-6 tracking-tight leading-[1.4]">
-                                                                <span className="text-white">forms.</span>
-                                                                <br />
-                                                                <span className="bg-gradient-to-r from-white via-gray-300 to-white/20 bg-clip-text text-transparent">
-                                                                        reimagined.
-                                                                </span>
-                                                        </h1>
-                                                </div>
-                                                {/* Right Side - Content */}
-                                                <div className="text-left">
-                                                        <p className="text-xl md:text-2xl text-gray-300 mb-8 leading-relaxed">
-                                                                Harness the power of AI to create stunning Google Forms
-                                                                in seconds. Just describe what you need, and watch as
-                                                                our advanced AI instantly crafts the perfect form
-                                                                directly in your Google account.
-                                                        </p>
-                                                        <div className="flex flex-wrap gap-4">
-                                                                <Button
-                                                                        size="lg"
-                                                                        className="bg-white text-black border border-transparent px-8 py-3 text-lg font-semibold transition-all duration-300 ease-in-out hover:bg-black hover:text-white hover:border-white"
-                                                                        onClick={() => navigate("/signup")}
-                                                                >
-                                                                        Get Started Free
-                                                                        <ArrowRight className="ml-2 w-5 h-5" />
-                                                                </Button>
+			{/* Bento Grid Features */}
+			<section className="py-32 px-4 sm:px-6 lg:px-8 relative z-10">
+				<div className="max-w-7xl mx-auto">
+					<div className="mb-20 text-center">
+						<h2 className="text-3xl md:text-5xl font-heading font-bold mb-6">Designed for Speed</h2>
+						<p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+							Experience the next generation of form building. Intelligent, intuitive, and incredibly fast.
+						</p>
+					</div>
 
-                                                                <Button
-                                                                        size="lg"
-                                                                        className="bg-white text-black border border-transparent px-8 py-3 text-lg font-semibold transition-all duration-300 ease-in-out hover:bg-black hover:text-white hover:border-white"
-                                                                        onClick={() => navigate("/signin")}
-                                                                >
-                                                                        Sign In
-                                                                </Button>
-                                                        </div>
-                                                </div>
-                                        </div>
-                                </div>
-                        </section>
+					<div className="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-[300px]">
+						{/* Large Card */}
+						<div className="md:col-span-2 row-span-2 glass-panel rounded-3xl p-8 relative overflow-hidden group border-white/5 hover:border-white/20 transition-colors duration-500">
+							<div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/2 group-hover:bg-white/10 transition-colors duration-500"></div>
+							<div className="relative z-10 h-full flex flex-col justify-between">
+								<div className="p-4 bg-white/5 backdrop-blur-md rounded-2xl w-fit border border-white/10">
+									<Zap className="w-8 h-8 text-white" />
+								</div>
+								<div>
+									<h3 className="text-3xl font-heading font-semibold mb-4">Instant Generation</h3>
+									<p className="text-muted-foreground text-lg leading-relaxed max-w-md">
+										Type "Create a customer satisfaction survey for a coffee shop" and watch as Formai generates questions, logic, and style instantly.
+									</p>
+								</div>
+							</div>
+						</div>
 
-                        {/* Features Section */}
-                        <section className="py-20 px-4 sm:px-6 lg:px-8">
-                                <div className="max-w-7xl mx-auto">
-                                        <div className="text-center mb-16">
-                                                <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
-                                                        The Future of Form Creation
-                                                </h2>
-                                                <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-                                                        Say goodbye to tedious form building forever. Our AI understands
-                                                        exactly what you need and creates professional Google Forms in
-                                                        mere seconds.
-                                                </p>
-                                        </div>
+						{/* Small Card 1 */}
+						<div className="glass-panel rounded-3xl p-8 relative overflow-hidden group hover:border-white/30 transition-colors duration-300">
+							<div className="relative z-10 h-full flex flex-col justify-between">
+								<Shield className="w-8 h-8 text-neutral-300" />
+								<div>
+									<h3 className="text-xl font-heading font-semibold mb-2">Enterprise Security</h3>
+									<p className="text-muted-foreground">Built on Google's secure infrastructure.</p>
+								</div>
+							</div>
+						</div>
 
-                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                                                {features.map((feature, index) => (
-                                                        <div
-                                                                key={index}
-                                                                className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-8 hover:bg-white/10 transition-all duration-300 transform hover:-translate-y-1"
-                                                        >
-                                                                <div className="mb-4">{feature.icon}</div>
-                                                                <h3 className="text-xl font-semibold text-white mb-3">
-                                                                        {feature.title}
-                                                                </h3>
-                                                                <p className="text-gray-300 leading-relaxed">
-                                                                        {feature.description}
-                                                                </p>
-                                                        </div>
-                                                ))}
-                                        </div>
-                                </div>
-                        </section>
+						{/* Small Card 2 */}
+						<div className="glass-panel rounded-3xl p-8 relative overflow-hidden group hover:border-white/30 transition-colors duration-300">
+							<div className="relative z-10 h-full flex flex-col justify-between">
+								<Globe className="w-8 h-8 text-neutral-400" />
+								<div>
+									<h3 className="text-xl font-heading font-semibold mb-2">Global Reach</h3>
+									<p className="text-muted-foreground">Auto-translation into 30+ languages.</p>
+								</div>
+							</div>
+						</div>
 
-                        {/* How It Works Section */}
-                        <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-transparent to-black/20">
-                                <div className="max-w-7xl mx-auto">
-                                        <div className="text-center mb-16">
-                                                <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
-                                                        Effortless Creation Process
-                                                </h2>
-                                                <p className="text-xl text-gray-300 max-w-3xl mx-auto">
-                                                        From idea to finished form in seconds. Our streamlined process
-                                                        eliminates all the complexity of traditional form building.
-                                                </p>
-                                        </div>
+						{/* Wide Card */}
+						<div className="md:col-span-3 glass-panel rounded-3xl p-8 flex flex-col md:flex-row items-center justify-between gap-8 group hover:border-white/20 transition-colors">
+							<div className="text-left max-w-xl">
+								<h3 className="text-3xl font-heading font-semibold mb-4">Seamless Integration</h3>
+								<p className="text-muted-foreground text-lg">
+									Works directly with your existing Google Workspace. No new accounts to manage, just pure productivity.
+								</p>
+							</div>
+							<div className="flex-shrink-0 p-6 bg-white/5 rounded-2xl border border-white/10 group-hover:scale-105 transition-transform duration-500">
+								<div className="flex items-center gap-4 text-sm font-mono text-muted-foreground">
+									<span className="text-white">✓</span> Connected to Google Drive
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
 
-                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                                                <div className="text-center">
-                                                        <div className="bg-gradient-to-r from-white/30 to-white/80 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-6">
-                                                                <span className="text-2xl font-bold text-black">1</span>
-                                                        </div>
-                                                        <h3 className="text-xl font-semibold text-white mb-3">
-                                                                Describe Your Vision
-                                                        </h3>
-                                                        <p className="text-gray-300">
-                                                                Type a natural language prompt describing exactly what
-                                                                you need. Our AI understands context, purpose, and
-                                                                specific requirements.
-                                                        </p>
-                                                </div>
-                                                <div className="text-center">
-                                                        <div className="bg-gradient-to-r from-white/30 to-white/80 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-6">
-                                                                <span className="text-2xl font-bold text-black">2</span>
-                                                        </div>
-                                                        <h3 className="text-xl font-semibold text-white mb-3">
-                                                                AI Magic Happens
-                                                        </h3>
-                                                        <p className="text-gray-300">
-                                                                Our powerful AI analyzes your request and crafts the
-                                                                perfect Google Form with intelligent questions, logic,
-                                                                and formatting.
-                                                        </p>
-                                                </div>
-                                                <div className="text-center">
-                                                        <div className="bg-gradient-to-r from-white/30 to-white/80 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-6">
-                                                                <span className="text-2xl font-bold text-black">3</span>
-                                                        </div>
-                                                        <h3 className="text-xl font-semibold text-white mb-3">
-                                                                Instant Delivery
-                                                        </h3>
-                                                        <p className="text-gray-300">
-                                                                Your professionally designed form appears instantly in
-                                                                your Google Forms account, ready to share and collect
-                                                                responses.
-                                                        </p>
-                                                </div>
-                                        </div>
-                                </div>
-                        </section>
-
-                        {/* CTA Section */}
-                        <section className="py-20 px-4 sm:px-6 lg:px-8">
-                                <div className="max-w-4xl mx-auto text-center">
-                                        <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
-                                                Ready to Revolutionize Your Form Creation?
-                                        </h2>
-                                        <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
-                                                Join thousands of users already creating amazing Google Forms with AI.
-                                                Get started for free today.
-                                        </p>
-                                        <div className="flex flex-wrap justify-center gap-4">
-                                                <Button
-                                                        size="lg"
-                                                        className="bg-white text-black border border-transparent px-8 py-3 text-lg font-semibold transition-all duration-300 ease-in-out hover:bg-black hover:text-white hover:border-white"
-                                                        onClick={() => navigate("/signup")}
-                                                >
-                                                        Get Started Free
-                                                        <ArrowRight className="ml-2 w-5 h-5" />
-                                                </Button>
-
-                                                <Button
-                                                        size="lg"
-                                                        className="bg-white text-black border border-transparent px-8 py-3 text-lg font-semibold transition-all duration-300 ease-in-out hover:bg-black hover:text-white hover:border-white"
-                                                        onClick={() => navigate("/signin")}
-                                                >
-                                                        Sign In
-                                                </Button>
-                                        </div>
-                                </div>
-                        </section>
-                </div>
-        );
+			{/* Minimal CTA */}
+			<section className="py-32 px-4 text-center relative overflow-hidden">
+				<div className="absolute inset-0 bg-gradient-to-b from-transparent to-white/5 pointer-events-none"></div>
+				<div className="relative z-10 max-w-3xl mx-auto space-y-8">
+					<h2 className="text-4xl md:text-6xl font-heading font-bold tracking-tight">
+						Ready to build?
+					</h2>
+					<p className="text-xl text-muted-foreground">
+						Join the waitlist and experience the future of forms.
+					</p>
+					<Button
+						size="lg"
+						className="rounded-full px-10 py-8 text-xl bg-white text-black hover:bg-neutral-200 shadow-2xl shadow-white/10 transition-all hover:scale-105"
+						onClick={() => navigate("/signup")}>
+						Get Started Now
+					</Button>
+				</div>
+			</section>
+		</div>
+	);
 };
 
 export default Home;
