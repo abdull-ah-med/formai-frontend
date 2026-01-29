@@ -6,10 +6,11 @@ const Footer = () => {
 	const currentYear = new Date().getFullYear();
 
 	return (
-		<footer className="relative bg-background border-t border-white/5 py-16 overflow-hidden">
-			{/* Ambient background glow */}
-			<div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/5 rounded-full blur-[128px] pointer-events-none" />
-			<div className="absolute bottom-0 right-1/4 w-96 h-96 bg-purple-500/5 rounded-full blur-[128px] pointer-events-none" />
+		<footer className="relative py-16 overflow-hidden" style={{ background: 'linear-gradient(160deg, #0f0f12 0%, #151318 20%, #1a1520 40%, #181420 60%, #14121a 80%, #0f0f12 100%)' }}>
+			{/* Ambient background glow - soft purple/blue and rose tones */}
+			<div className="absolute top-0 left-1/4 w-96 h-96 bg-purple-800/10 rounded-full blur-[150px] pointer-events-none" />
+			<div className="absolute bottom-0 right-1/4 w-96 h-96 bg-blue-800/10 rounded-full blur-[150px] pointer-events-none" />
+			<div className="absolute top-1/2 right-1/3 w-64 h-64 bg-rose-800/8 rounded-full blur-[120px] pointer-events-none" />
 
 			<div className="relative z-10 max-w-7xl mx-auto px-6">
 				<div className="grid grid-cols-1 md:grid-cols-12 gap-12 md:gap-8 mb-16">
