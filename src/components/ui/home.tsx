@@ -1,15 +1,73 @@
-import { ArrowRight, Sparkles, Zap, Shield, Globe } from "lucide-react";
+import { ArrowRight, Sparkles, Zap, Shield, Globe, Send } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { useEffect } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useAuth } from "../../hooks/useAuth";
 import { logoutAndRedirect } from "@/auth/authHelper";
 import { useDocumentTitle } from "@/utils/useDocumentTitle";
+
+const DEMO_PROMPT = "Create a customer feedback form for a coffee shop";
+const DEMO_FIELDS = [
+	{ type: "text", label: "Your Name", placeholder: "Enter your name" },
+	{ type: "email", label: "Email Address", placeholder: "you@example.com" },
+	{ type: "rating", label: "How would you rate your experience?", value: 4 },
+	{ type: "textarea", label: "What did you enjoy most?", placeholder: "Tell us about your visit..." },
+];
 
 const Home = () => {
 	const navigate = useNavigate();
 	const { isAuthenticated, loading } = useAuth();
 	useDocumentTitle("Formai - AI Form Generation");
+
+	// Demo animation state
+	const [typedText, setTypedText] = useState("");
+	const [isTypingComplete, setIsTypingComplete] = useState(false);
+	const [visibleFields, setVisibleFields] = useState(0);
+	const [showCursor, setShowCursor] = useState(true);
+	const demoRef = useRef<HTMLDivElement>(null);
+
+	// Typing animation
+	useEffect(() => {
+		let charIndex = 0;
+		const typeInterval = setInterval(() => {
+			if (charIndex < DEMO_PROMPT.length) {
+				setTypedText(DEMO_PROMPT.slice(0, charIndex + 1));
+				charIndex++;
+			} else {
+				clearInterval(typeInterval);
+				setTimeout(() => {
+					setIsTypingComplete(true);
+					setShowCursor(false);
+				}, 500);
+			}
+		}, 60);
+
+		return () => clearInterval(typeInterval);
+	}, []);
+
+	// Cursor blink
+	useEffect(() => {
+		if (isTypingComplete) return;
+		const blinkInterval = setInterval(() => {
+			setShowCursor(prev => !prev);
+		}, 530);
+		return () => clearInterval(blinkInterval);
+	}, [isTypingComplete]);
+
+	// Form fields appearing animation
+	useEffect(() => {
+		if (!isTypingComplete) return;
+		const fieldInterval = setInterval(() => {
+			setVisibleFields(prev => {
+				if (prev >= DEMO_FIELDS.length) {
+					clearInterval(fieldInterval);
+					return prev;
+				}
+				return prev + 1;
+			});
+		}, 400);
+		return () => clearInterval(fieldInterval);
+	}, [isTypingComplete]);
 
 	useEffect(() => {
 		if (loading) return;
@@ -67,17 +125,78 @@ const Home = () => {
 					</div>
 				</div>
 				
-				{/* Floating Concept UI at bottom of hero */}
-				<div className="relative z-30 mt-20 w-full max-w-4xl mx-auto animate-in fade-in slide-in-from-bottom-12 duration-1000 delay-500">
-					<div className="glass-panel p-1 rounded-2xl border-white/10 bg-black/40 backdrop-blur-xl">
-						<div className="bg-black/50 rounded-xl p-6 border border-white/5 flex items-center gap-4">
-							<div className="w-3 h-3 rounded-full bg-red-500"></div>
-							<div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-							<div className="w-3 h-3 rounded-full bg-green-500"></div>
-							<div className="ml-4 h-2 w-32 bg-white/10 rounded-full"></div>
+				{/* Interactive Demo Interface */}
+				<div ref={demoRef} className="relative z-30 mt-20 w-full max-w-4xl mx-auto animate-in fade-in slide-in-from-bottom-12 duration-1000 delay-500">
+					<div className="glass-panel p-1 rounded-2xl border border-white/10 bg-black/40 backdrop-blur-xl shadow-2xl">
+						{/* Window Chrome */}
+						<div className="bg-black/60 rounded-t-xl px-4 py-3 border-b border-white/5 flex items-center gap-3">
+							<div className="flex gap-2">
+								<div className="w-3 h-3 rounded-full bg-red-500/80"></div>
+								<div className="w-3 h-3 rounded-full bg-yellow-500/80"></div>
+								<div className="w-3 h-3 rounded-full bg-green-500/80"></div>
+							</div>
+							<div className="flex-1 flex justify-center">
+								<div className="px-4 py-1 bg-white/5 rounded-md text-xs text-white/40">Formai</div>
+							</div>
+							<div className="w-16"></div>
 						</div>
-						<div className="h-40 md:h-64 flex items-center justify-center">
-							<span className="text-white/20 font-heading italic text-2xl">Interactive Demo Interface</span>
+						
+						{/* Demo Content */}
+						<div className="p-6 space-y-6">
+							{/* AI Prompt Input */}
+							<div className="flex items-center gap-3 p-4 bg-white/5 rounded-xl border border-white/10">
+								<Sparkles className="w-5 h-5 text-purple-400 flex-shrink-0" />
+								<div className="flex-1 text-left">
+									<span className="text-white/90">{typedText}</span>
+									{!isTypingComplete && (
+										<span className={`inline-block w-0.5 h-5 bg-white/80 ml-0.5 align-middle ${showCursor ? 'opacity-100' : 'opacity-0'}`}></span>
+									)}
+								</div>
+								<button className={`p-2 rounded-lg transition-all ${isTypingComplete ? 'bg-purple-500 text-white' : 'bg-white/10 text-white/40'}`}>
+									<Send className="w-4 h-4" />
+								</button>
+							</div>
+
+							{/* Generated Form Preview */}
+							{isTypingComplete && (
+								<div className="space-y-4">
+									<div className="flex items-center gap-2 text-sm text-white/60">
+										<div className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div>
+										<span>Generating your form...</span>
+									</div>
+									
+									<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+										{DEMO_FIELDS.slice(0, visibleFields).map((field, index) => (
+											<div
+												key={index}
+												className={`p-4 bg-white/5 rounded-xl border border-white/10 animate-in fade-in slide-in-from-bottom-4 duration-300 ${field.type === 'textarea' ? 'md:col-span-2' : ''}`}
+											>
+												<label className="block text-sm text-white/70 mb-2">{field.label}</label>
+												{field.type === 'rating' ? (
+													<div className="flex gap-2">
+														{[1, 2, 3, 4, 5].map((star) => (
+															<div
+																key={star}
+																className={`w-8 h-8 rounded-lg flex items-center justify-center text-lg ${star <= (field.value || 0) ? 'bg-yellow-500/20 text-yellow-400' : 'bg-white/5 text-white/20'}`}
+															>
+																★
+															</div>
+														))}
+													</div>
+												) : field.type === 'textarea' ? (
+													<div className="h-16 bg-white/5 rounded-lg border border-white/10 px-3 py-2 text-white/30 text-sm">
+														{field.placeholder}
+													</div>
+												) : (
+													<div className="h-10 bg-white/5 rounded-lg border border-white/10 px-3 flex items-center text-white/30 text-sm">
+														{field.placeholder}
+													</div>
+												)}
+											</div>
+										))}
+									</div>
+								</div>
+							)}
 						</div>
 					</div>
 				</div>
