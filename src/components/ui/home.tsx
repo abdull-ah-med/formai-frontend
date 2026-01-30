@@ -87,8 +87,8 @@ const Home = () => {
 		<div className="bg-background text-foreground min-h-screen overflow-x-hidden selection:bg-white/20">
 			{/* Hero Section */}
 			<section className="relative min-h-screen flex flex-col justify-center items-center px-4 sm:px-6 lg:px-8 text-center pt-24 pb-12">
-				{/* Background Image - Responsive */}
-				<div className="absolute inset-0 overflow-hidden">
+				{/* Background Image - Responsive - Fixed to viewport */}
+				<div className="fixed inset-0 overflow-hidden pointer-events-none" style={{ zIndex: 0 }}>
 					<div className="absolute inset-0 bg-black/40 z-10"></div> {/* Overlay for text readability */}
 					{/* Mobile background */}
 					<img 
