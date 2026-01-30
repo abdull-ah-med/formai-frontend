@@ -66,7 +66,7 @@ const Footer = () => {
 					</p>
 					
 					<div className="flex items-center gap-6">
-						<a href="mailto:contact@formai.com" className="text-muted-foreground hover:text-foreground transition-colors"><Mail size={18} /></a>
+						<a href="mailto:reachformaihere@gmail.com" className="text-muted-foreground hover:text-foreground transition-colors"><Mail size={18} /></a>
 					</div>
 				</div>
 			</div>

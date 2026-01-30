@@ -213,9 +213,9 @@ const ApiKeyPolicy = () => {
                                         If you have any questions or concerns about how we handle your API key, please
                                         contact us at{" "}
                                         <a
-                                            href='mailto:security@formai.com'
+                                            href='mailto:reachformaihere@gmail.com'
                                             className='text-purple-400 hover:underline'>
-                                            security@formai.com
+                                            reachformaihere@gmail.com
                                         </a>
                                     </p>
                                 </div>
