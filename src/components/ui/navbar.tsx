@@ -32,16 +32,24 @@ const Navbar = () => {
 	const [isScrolled, setIsScrolled] = useState(false);
 	const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 	const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+	const [isMobile, setIsMobile] = useState(false);
 
 	const handleScroll = () => {
 		const offset = window.scrollY;
 		setIsScrolled(offset > 20);
 	};
 
+	const handleResize = () => {
+		setIsMobile(window.innerWidth < 768);
+	};
+
 	useEffect(() => {
+		handleResize();
 		window.addEventListener("scroll", handleScroll);
+		window.addEventListener("resize", handleResize);
 		return () => {
 			window.removeEventListener("scroll", handleScroll);
+			window.removeEventListener("resize", handleResize);
 		};
 	}, []);
 
@@ -113,6 +121,10 @@ const Navbar = () => {
 		<>
 			<div className="fixed top-6 left-0 right-0 z-50 flex justify-center px-4 pointer-events-none">
 				<nav
+					style={{
+						maxWidth: isScrolled ? (isMobile ? '160px' : '650px') : '900px',
+						transition: 'max-width 500ms cubic-bezier(0.4, 0, 0.2, 1), background-color 500ms, backdrop-filter 500ms, box-shadow 500ms'
+					}}
 					className={`
             pointer-events-auto
             flex items-center justify-between
@@ -120,22 +132,22 @@ const Navbar = () => {
             border border-white/10
             shadow-[0_8px_32px_rgba(0,0,0,0.12)]
             rounded-full
-            						px-4 py-2 md:px-6 md:py-3
-						transition-all duration-500 ease-nebula
+						px-4 py-2 md:px-6 md:py-3
+						w-full
 						${isScrolled
-							? "w-[min(90%,650px)] py-2 bg-background/90 backdrop-blur-3xl shadow-xl"
-							: "w-[min(95%,900px)] bg-background/60"}
+							? "bg-background/90 backdrop-blur-3xl shadow-xl"
+							: "bg-background/60"}
 					`}>
 					{/* Logo */}
 					<Link to="/" className="flex items-center gap-2 group mr-2 sm:mr-4 shrink-0">
-						<div className="relative w-8 h-8 flex items-center justify-center bg-primary/10 rounded-full group-hover:bg-primary/20 transition-colors">
+						<div className={`relative w-8 h-8 items-center justify-center bg-primary/10 rounded-full group-hover:bg-primary/20 transition-all duration-500 hidden md:flex`}>
 							<img
 								src={FormaiLogo}
 								alt="Formai"
 								className="h-5 w-5 transition-transform duration-300 group-hover:rotate-12"
 							/>
 						</div>
-						<span className="font-heading font-semibold text-lg tracking-tight hidden sm:block">
+						<span className={`font-heading font-semibold text-lg tracking-tight transition-all duration-500 block`}>
 							Formai
 						</span>
 					</Link>
@@ -195,67 +207,91 @@ const Navbar = () => {
 
 			{/* Mobile Menu Overlay */}
 			<div
-				className={`fixed inset-0 z-[60] bg-black/80 backdrop-blur-xl transition-all duration-300 ${
+				className={`fixed inset-0 z-[60] bg-black/90 backdrop-blur-2xl transition-all duration-500 md:hidden ${
 					isMobileMenuOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
 				}`}
 				onClick={() => setIsMobileMenuOpen(false)}>
 				
+				{/* Full-screen mobile menu */}
 				<div
-					className={`absolute right-4 top-4 left-4 bg-[#0a0a0a] border border-white/10 rounded-3xl p-6 shadow-2xl transform transition-all duration-300 ${
-						isMobileMenuOpen ? "translate-y-0 scale-100" : "-translate-y-10 scale-95"
+					className={`h-full w-full flex flex-col transform transition-all duration-500 ${
+						isMobileMenuOpen ? "translate-y-0 opacity-100" : "-translate-y-8 opacity-0"
 					}`}
 					onClick={(e) => e.stopPropagation()}>
 					
-					<div className="flex justify-between items-center mb-6">
-						<span className="font-heading font-semibold text-xl text-white">Menu</span>
+					{/* Header */}
+					<div className="flex justify-between items-center p-6 border-b border-white/5">
+						<span className="font-heading font-semibold text-2xl text-white">Formai</span>
 						<button
 							onClick={() => setIsMobileMenuOpen(false)}
-							className="p-2 hover:bg-white/5 text-white/70 hover:text-white rounded-full transition-colors">
+							className="p-3 hover:bg-white/10 text-white/70 hover:text-white rounded-full transition-all active:scale-95">
 							<X className="w-6 h-6" />
 						</button>
 					</div>
 
-					<div className="flex flex-col gap-2">
-						{navItems.map((item) => {
-							const isActive = location.pathname === item.href;
-							const className = `
-								flex items-center gap-3 p-4 rounded-xl transition-all text-base font-medium
-								${isActive ? "bg-white/10 text-white" : "text-muted-foreground hover:bg-white/5 hover:text-foreground"}
-								${item.variant === "primary" ? "bg-white text-black hover:bg-neutral-200 justify-center mt-4 shadow-lg shadow-white/5" : ""}
-							`;
+					{/* Navigation Items */}
+					<div className="flex-1 flex flex-col justify-center px-6 py-8">
+						<div className="flex flex-col gap-2">
+							{navItems.filter(item => item.variant !== "primary").map((item, index) => {
+								const isActive = location.pathname === item.href;
+								const baseClassName = `
+									flex items-center gap-4 p-5 rounded-2xl transition-all text-lg font-medium
+									${isActive 
+										? "bg-white/10 text-white" 
+										: "text-white/60 hover:bg-white/5 hover:text-white active:scale-[0.98]"}
+									${item.variant === "danger" ? "text-red-400/80 hover:text-red-400 hover:bg-red-500/10" : ""}
+								`;
 
-							const content = (
-								<>
-									{item.icon}
-									<span>{item.name}</span>
-								</>
-							);
-
-							if (item.isRouterLink) {
-								return (
-									<Link
-										key={item.name}
-										to={item.href}
-										className={className}
-										onClick={() => setIsMobileMenuOpen(false)}>
-										{content}
-									</Link>
+								const content = (
+									<>
+										<div className={`p-2 rounded-xl ${isActive ? "bg-white/10" : "bg-white/5"}`}>
+											{item.icon}
+										</div>
+										<span>{item.name}</span>
+									</>
 								);
-							}
 
-							return (
-								<button
-									key={item.name}
-									onClick={() => {
-										item.onClick?.();
-										setIsMobileMenuOpen(false);
-									}}
-									className={className}>
-									{content}
-								</button>
-							);
-						})}
+								if (item.isRouterLink) {
+									return (
+										<Link
+											key={item.name}
+											to={item.href}
+											className={baseClassName}
+											style={{ animationDelay: `${index * 50}ms` }}
+											onClick={() => setIsMobileMenuOpen(false)}>
+											{content}
+										</Link>
+									);
+								}
+
+								return (
+									<button
+										key={item.name}
+										onClick={() => {
+											item.onClick?.();
+											setIsMobileMenuOpen(false);
+										}}
+										className={baseClassName}
+										style={{ animationDelay: `${index * 50}ms` }}>
+										{content}
+									</button>
+								);
+							})}
+						</div>
 					</div>
+
+					{/* CTA Button at Bottom */}
+					{navItems.filter(item => item.variant === "primary").map((item) => (
+						<div key={item.name} className="p-6 border-t border-white/5">
+							<Link
+								to={item.href}
+								className="flex items-center justify-center gap-3 w-full p-4 rounded-2xl bg-white text-black font-semibold text-lg hover:bg-neutral-100 transition-all active:scale-[0.98] shadow-xl shadow-white/10"
+								onClick={() => setIsMobileMenuOpen(false)}>
+								{item.icon}
+								<span>{item.name}</span>
+							</Link>
+						</div>
+					))}
 				</div>
 			</div>
 
