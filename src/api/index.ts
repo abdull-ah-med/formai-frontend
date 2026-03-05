@@ -1,7 +1,7 @@
 import axios from "axios";
 
 // Standard timeout for most requests
-const DEFAULT_TIMEOUT = 30000; // 30 seconds
+const DEFAULT_TIMEOUT = 120000; // 30 seconds
 
 // Extended timeout for form generation/revision operations that use Claude API
 const FORM_GENERATION_TIMEOUT = 60000; // 1 minute (decreased from 3 minutes)
