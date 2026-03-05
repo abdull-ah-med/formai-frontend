@@ -4,7 +4,7 @@ import axios from "axios";
 // const DEFAULT_TIMEOUT = 120000; // 30 seconds
 
 // Extended timeout for form generation/revision operations that use Claude API
-const FORM_GENERATION_TIMEOUT = 120000; // 1 minute (decreased from 3 minutes)
+const FORM_GENERATION_TIMEOUT = 300000; // 1 minute (decreased from 3 minutes)
 
 const api = axios.create({
 	baseURL: import.meta.env.VITE_API_BASE_URL || "/api",
