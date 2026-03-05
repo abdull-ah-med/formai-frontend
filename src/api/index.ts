@@ -5,6 +5,9 @@ import axios from "axios";
 
 // Extended timeout for form generation/revision operations that use Claude API
 const FORM_GENERATION_TIMEOUT = 300000; // 1 minute (decreased from 3 minutes)
+const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent";
+const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
+
 
 const api = axios.create({
 	baseURL: import.meta.env.VITE_API_BASE_URL || "/api",
@@ -37,6 +40,7 @@ api.interceptors.response.use(
 export const generateForm = async (prompt: string) => {
 	// Use the longer timeout for Claude API calls
 	const response = await api.post(
+		
 		"/form/generate-form",
 		{ prompt },
 		{
